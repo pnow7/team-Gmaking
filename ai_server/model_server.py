@@ -115,4 +115,4 @@ async def classify_image(file: UploadFile = File(...)):
 
 # 가상화 실행
 # .\venv\Scripts\activate
-# uvicorn controller.main:app --reload --host 0.0.0.0 --port 8000
+# uvicorn controller.main:app --reload --port 8001
