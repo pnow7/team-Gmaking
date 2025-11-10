@@ -16,7 +16,7 @@
 
     <select id="selectAllMaps" resultMap="MapResultMap">
         SELECT *
-        FROM TB_MAP
+        FROM tb_map
         ORDER BY MAP_ID ASC
     </select>
 
@@ -29,7 +29,7 @@
         CREATED_BY AS createdBy,
         UPDATED_DATE AS updatedDate,
         UPDATED_BY AS updatedBy
-        FROM TB_Map
+        FROM tb_map
         WHERE MAP_ID = #{mapId}
     </select>
 </mapper>

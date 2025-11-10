@@ -5,75 +5,75 @@
 
     <!-- 프로필 매핑 -->
     <resultMap id="MyPageProfileVOMap" type="com.project.gmaking.myPage.vo.MyPageProfileVO">
-        <result property="userId"        column="user_id"/>
-        <result property="nickname"      column="user_nickname"/>
-        <result property="email"         column="user_email"/>
-        <result property="role"          column="role"/>
-        <result property="imageUrl"      column="image_url"/>
-        <result property="ticketCount"   column="ticket_count"/>
+        <result property="userId" column="user_id"/>
+        <result property="nickname" column="user_nickname"/>
+        <result property="email" column="user_email"/>
+        <result property="role" column="role"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="ticketCount" column="ticket_count"/>
     </resultMap>
 
     <!-- 캐릭터 카드 + 스탯 매핑 -->
     <resultMap id="CharacterCardVOMap" type="com.project.gmaking.myPage.vo.CharacterCardVO">
-        <result property="characterId"   column="character_id"/>
-        <result property="name"          column="character_name"/>
+        <result property="characterId" column="character_id"/>
+        <result property="name" column="character_name"/>
         <result property="evolutionStep" column="evolution_step"/>
-        <result property="grade"         column="grade"/>
-        <result property="imageUrl"      column="image_url"/>
+        <result property="grade" column="grade"/>
+        <result property="imageUrl" column="image_url"/>
         <result property="stageClearCount" column="stage_clear_count"/>
 
         <!-- association: VO 필드명/타입/내부 프로퍼티 전부 VO에 맞추기 -->
         <association property="characterStatVO"
                      javaType="com.project.gmaking.myPage.vo.MypageCharacterStatVO">
-            <result column="character_hp"       property="hp"/>
-            <result column="character_attack"   property="attack"/>
-            <result column="character_defense"  property="defense"/>
-            <result column="character_speed"    property="speed"/>
-            <result column="critical_rate"      property="criticalRate"/>
+            <result column="character_hp" property="hp"/>
+            <result column="character_attack" property="attack"/>
+            <result column="character_defense" property="defense"/>
+            <result column="character_speed" property="speed"/>
+            <result column="critical_rate" property="criticalRate"/>
         </association>
     </resultMap>
 
     <!-- 프로필: image_url 그대로 -->
     <select id="selectProfile" resultMap="MyPageProfileVOMap">
-        SELECT
-        u.user_id,
-        u.user_nickname,
-        u.user_email,
-        u.role,
-        0 AS ticket_count,
-        i.image_url AS image_url
+        SELECT u.user_id,
+               u.user_nickname,
+               u.user_email,
+               u.role,
+               0           AS ticket_count,
+               i.image_url AS image_url
         FROM tb_user u
-        LEFT JOIN tb_image i ON u.image_id = i.image_id
-        WHERE u.user_id = #{userId}
-        LIMIT 1
+                 LEFT JOIN tb_image i ON u.image_id = i.image_id
+        WHERE u.user_id = #{userId} LIMIT 1
     </select>
 
     <!-- 캐릭터 목록: image_url 그대로 + 스탯 포함 -->
     <select id="selectCharacters" resultMap="CharacterCardVOMap">
-        SELECT
-        c.character_id,
-        c.character_name,
-        c.evolution_step,
-        c.grade_id AS grade,
-        img.image_url AS image_url,
-        c.total_stage_clears AS stage_clear_count,
-        s.character_hp,
-        s.character_attack,
-        s.character_defense,
-        s.character_speed,
-        s.critical_rate
+        SELECT c.character_id,
+               c.character_name,
+               c.evolution_step,
+               c.grade_id           AS grade,
+               img.image_url        AS image_url,
+               c.total_stage_clears AS stage_clear_count,
+               s.character_hp,
+               s.character_attack,
+               s.character_defense,
+               s.character_speed,
+               s.critical_rate
         FROM tb_character c
-        LEFT JOIN tb_image img ON c.image_id = img.image_id
-        LEFT JOIN tb_character_stat s ON s.character_id = c.character_id
+                 LEFT JOIN tb_image img ON c.image_id = img.image_id
+                 LEFT JOIN tb_character_stat s ON s.character_id = c.character_id
         WHERE c.user_id = #{userId}
         ORDER BY c.updated_date DESC
-        LIMIT #{limit} OFFSET #{offset}
+            LIMIT #{limit}
+        OFFSET #{offset}
     </select>
 
     <select id="countCharacters" resultType="int">
-        SELECT COUNT(*) FROM tb_character WHERE user_id = #{userId}
+        SELECT COUNT(*)
+        FROM tb_character
+        WHERE user_id = #{userId}
     </select>
 
-<!--  대표 캐릭  -->
+    <!--  대표 캐릭  -->
 
 </mapper>

@@ -12,7 +12,7 @@
     </resultMap>
 
     <insert id="saveVerificationCode" parameterType="com.project.gmaking.email.vo.EmailVerificationVO">
-        INSERT INTO TB_USER_EMAIL_VERIFY
+        INSERT INTO tb_user_email_verify
         (
             USER_ID,
             EMAIL,
@@ -45,13 +45,13 @@
             VERIFY_CODE,
             EXPIRY_DATE,
             IS_VERIFIED
-        FROM TB_USER_EMAIL_VERIFY
+        FROM tb_user_email_verify
         WHERE USER_ID = #{userId}
         AND EMAIL = #{email}
     </select>
 
     <update id="updateVerificationStatus">
-        UPDATE TB_USER_EMAIL_VERIFY
+        UPDATE tb_user_email_verify
         SET
             IS_VERIFIED  = #{isVerified},
             UPDATED_DATE = NOW()
@@ -59,7 +59,7 @@
     </update>
 
     <update id="updateIsEmailVerifiedInUser">
-        UPDATE TB_USER
+        UPDATE tb_user
         SET
             IS_EMAIL_VERIFIED = #{isVerified}
         WHERE USER_ID = #{userId}
@@ -67,7 +67,7 @@
 
     <delete id="deleteVerificationInfoByUserId">
         DELETE
-        FROM TB_USER_EMAIL_VERIFY
+        FROM tb_user_email_verify
         WHERE USER_ID = #{userId}
     </delete>
 

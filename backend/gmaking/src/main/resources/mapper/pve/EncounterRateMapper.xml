@@ -12,7 +12,7 @@
 
     <select id="getEncounterRates" resultMap="encounterRateMap">
         SELECT *
-        FROM TB_ENCOUNTER_RATE
+        FROM tb_encounter_rate
     </select>
 
 </mapper>

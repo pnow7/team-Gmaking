@@ -12,14 +12,13 @@
     </resultMap>
 
     <select id="selectShopProfile" parameterType="string" resultMap="ShopProfileMap">
-        SELECT
-            u.USER_ID,
-            u.USER_NICKNAME,
-            COALESCE(img.IMAGE_URL, '') AS PROFILE_IMAGE_URL,
-            u.INCUBATOR_COUNT
+        SELECT u.USER_ID,
+               u.USER_NICKNAME,
+               COALESCE(img.IMAGE_URL, '') AS PROFILE_IMAGE_URL,
+               u.INCUBATOR_COUNT
         FROM tb_user u
-        LEFT JOIN tb_image img
-            ON img.IMAGE_ID = u.IMAGE_ID
+                 LEFT JOIN tb_image img
+                           ON img.IMAGE_ID = u.IMAGE_ID
         WHERE u.USER_ID = #{userId}
     </select>
 

@@ -24,24 +24,23 @@
     </resultMap>
 
     <select id="getRandomMonsterByType" resultMap="monsterResultMap">
-        SELECT
-        m.MONSTER_ID,
-        m.IMAGE_ID,
-        i.IMAGE_URL AS IMAGE_URL,
-        i.IMAGE_ORIGINAL_NAME AS imageOriginalName,
-        m.MONSTER_NAME,
-        m.MONSTER_TYPE,
-        m.MONSTER_HP,
-        m.MONSTER_ATTACK,
-        m.MONSTER_DEFENSE,
-        m.MONSTER_SPEED,
-        m.MONSTER_CRITICAL_RATE,
-        m.CREATED_DATE,
-        m.CREATED_BY,
-        m.UPDATED_DATE,
-        m.UPDATED_BY
-        FROM TB_MONSTER m
-        LEFT JOIN TB_IMAGE i ON m.IMAGE_ID = i.IMAGE_ID
+        SELECT m.MONSTER_ID,
+               m.IMAGE_ID,
+               i.IMAGE_URL           AS IMAGE_URL,
+               i.IMAGE_ORIGINAL_NAME AS imageOriginalName,
+               m.MONSTER_NAME,
+               m.MONSTER_TYPE,
+               m.MONSTER_HP,
+               m.MONSTER_ATTACK,
+               m.MONSTER_DEFENSE,
+               m.MONSTER_SPEED,
+               m.MONSTER_CRITICAL_RATE,
+               m.CREATED_DATE,
+               m.CREATED_BY,
+               m.UPDATED_DATE,
+               m.UPDATED_BY
+        FROM tb_monster m
+                 LEFT JOIN tb_image i ON m.IMAGE_ID = i.IMAGE_ID
         WHERE m.MONSTER_TYPE = #{type}
         ORDER BY RAND() LIMIT 1
     </select>

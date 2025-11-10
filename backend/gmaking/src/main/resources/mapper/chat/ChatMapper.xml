@@ -20,7 +20,7 @@
     <!--  최신 대화방  -->
     <select id="findLatestConversationId" resultType="int">
         SELECT CONVERSATION_ID
-        FROM TB_CONVERSATION
+        FROM tb_conversation
         WHERE USER_ID = #{userId}
             AND CHARACTER_ID = #{characterId}
         ORDER BY UPDATED_DATE DESC, CONVERSATION_ID DESC
@@ -29,13 +29,13 @@
 
     <!--  대화방 생성  -->
     <insert id="createConversation">
-        INSERT INTO TB_CONVERSATION (USER_ID, CHARACTER_ID, CREATED_DATE, CREATED_BY, UPDATED_DATE, UPDATED_BY)
+        INSERT INTO tb_conversation (USER_ID, CHARACTER_ID, CREATED_DATE, CREATED_BY, UPDATED_DATE, UPDATED_BY)
         VALUES (#{userId}, #{characterId}, NOW(), #{actor}, NOW(), #{actor})
     </insert>
 
     <!--  메시지 저장  -->
     <insert id="insertDialogue" useGeneratedKeys="true" keyProperty="messageId">
-        INSERT INTO TB_DIALOGUE
+        INSERT INTO tb_dialogue
             (CONVERSATION_ID, SENDER, CONTENT, CHAT_DATE,
             CREATED_DATE, CREATED_BY, UPDATED_DATE, UPDATED_BY)
         VALUES
@@ -55,7 +55,7 @@
         CREATED_BY      AS created_by,
         UPDATED_DATE    AS updated_date,
         UPDATED_BY      AS updated_by
-        FROM TB_DIALOGUE
+        FROM tb_dialogue
         WHERE CONVERSATION_ID = #{conversationId}
         ORDER BY MESSAGE_ID DESC
         LIMIT #{limit}
@@ -72,7 +72,7 @@
         CREATED_BY          AS createdBy,
         UPDATED_DATE        AS updatedDate,
         UPDATED_BY          AS updatedBy
-        FROM TB_PERSONA
+        FROM tb_persona
         WHERE CHARACTER_ID = #{characterId}
         ORDER BY UPDATED_DATE DESC, PERSONA_ID DESC
         LIMIT 1
@@ -117,16 +117,16 @@
     </select>
 
     <delete id="deleteDialoguesByConversationId" parameterType="int">
-        DELETE FROM TB_DIALOGUE WHERE CONVERSATION_ID = #{conversationId}
+        DELETE FROM tb_dialogue WHERE CONVERSATION_ID = #{conversationId}
     </delete>
 
     <!--  스케줄러  -->
     <select id="countByConversationId" resultType="int">
-        SELECT COUNT(*) FROM TB_DIALOGUE WHERE CONVERSATION_ID = #{conversationId}
+        SELECT COUNT(*) FROM tb_dialogue WHERE CONVERSATION_ID = #{conversationId}
     </select>
 
     <insert id="insertSystemEvent">
-        INSERT INTO TB_DIALOGUE
+        INSERT INTO tb_dialogue
         (CONVERSATION_ID, SENDER, CONTENT, CHAT_DATE, CREATED_DATE, CREATED_BY, UPDATED_DATE, UPDATED_BY)
         VALUES
         (#{conversationId}, 'system', #{content}, CURDATE(), NOW(), #{actor}, NOW(), #{actor})

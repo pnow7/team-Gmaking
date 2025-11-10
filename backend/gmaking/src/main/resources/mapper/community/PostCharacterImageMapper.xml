@@ -11,12 +11,12 @@
         T3.image_url AS characterImageUrl,  T2.grade_id AS gradeId,
         T2.total_stage_clears AS totalStageClears
         FROM
-        TB_USER T1
+        tb_user T1
         INNER JOIN
-        TB_CHARACTER T2
+        tb_character T2
         ON T1.user_id = T2.user_id
         INNER JOIN
-        TB_IMAGE T3   ON T2.image_id = T3.image_id
+        tb_image T3 ON T2.image_id = T3.image_id
         WHERE
         T1.user_id = #{userId}
 

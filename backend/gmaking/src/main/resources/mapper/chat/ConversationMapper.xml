@@ -33,7 +33,7 @@
         CREATED_BY      AS createdBy,
         UPDATED_DATE    AS updatedDate,
         UPDATED_BY      AS updatedBy
-        FROM TB_CONVERSATION
+        FROM tb_conversation
         WHERE USER_ID = #{userId}
         AND CHARACTER_ID = #{characterId}
         ORDER BY CREATED_DATE DESC
@@ -41,7 +41,7 @@
     </select>
 
     <update id="updateFirstMeetFlag">
-        UPDATE TB_CONVERSATION
+        UPDATE tb_conversation
         SET IS_FIRST_MEET = #{isFirstMeet},
         UPDATED_BY    = #{actor},
         UPDATED_DATE  = NOW()
@@ -75,16 +75,16 @@
         IS_FIRST_MEET     AS isFirstMeet,
         CALLING_NAME      AS callingName,
         DELAY_LOG_CLEAN   AS delayLogClean
-        FROM TB_CONVERSATION
+        FROM tb_conversation
         WHERE CONVERSATION_ID = #{conversationId}
     </select>
 
     <select id="findConversationIdsByStatusPaged" resultType="int">
         SELECT c.CONVERSATION_ID
-        FROM TB_CONVERSATION c
+        FROM tb_conversation c
         WHERE c.STATUS = #{status}
         AND EXISTS (
-        SELECT 1 FROM TB_DIALOGUE d
+        SELECT 1 FROM tb_dialogue d
         WHERE d.CONVERSATION_ID = c.CONVERSATION_ID
         LIMIT 1
         )
@@ -93,7 +93,7 @@
     </select>
 
     <update id="markDelayLogCleanForOpen">
-        UPDATE TB_CONVERSATION
+        UPDATE tb_conversation
         SET DELAY_LOG_CLEAN = 1,
         UPDATED_DATE = NOW(),
         UPDATED_BY   = 'system@cleaner'
@@ -102,13 +102,13 @@
 
     <select id="selectDelayLogCleanForUpdate" resultType="boolean">
         SELECT DELAY_LOG_CLEAN
-        FROM TB_CONVERSATION
+        FROM tb_conversation
         WHERE CONVERSATION_ID = #{conversationId}
         FOR UPDATE
     </select>
 
     <update id="updateDelayLogClean">
-        UPDATE TB_CONVERSATION
+        UPDATE tb_conversation
         SET DELAY_LOG_CLEAN = #{delay},
         UPDATED_DATE = NOW(),
         UPDATED_BY   = #{actor}
@@ -116,14 +116,14 @@
     </update>
 
     <update id="touch">
-        UPDATE TB_CONVERSATION
+        UPDATE tb_conversation
         SET UPDATED_DATE = NOW(),
         UPDATED_BY   = #{actor}
         WHERE CONVERSATION_ID = #{conversationId}
     </update>
 
     <update id="updateStatus">
-        UPDATE TB_CONVERSATION
+        UPDATE tb_conversation
         SET STATUS = #{status, jdbcType=VARCHAR},
         UPDATED_BY = #{actor},
         UPDATED_DATE = NOW()
@@ -132,7 +132,7 @@
 
     <select id="findLatestOpenConversationId" resultType="int">
         SELECT CONVERSATION_ID
-        FROM TB_CONVERSATION
+        FROM tb_conversation
         WHERE USER_ID = #{userId}
         AND CHARACTER_ID = #{characterId}
         AND STATUS = 'OPEN'
@@ -141,7 +141,7 @@
     </select>
 
     <update id="closeConversation">
-        UPDATE TB_CONVERSATION
+        UPDATE tb_conversation
         SET STATUS = 'CLOSED',
         UPDATED_DATE = NOW(),
         UPDATED_BY = #{userId}

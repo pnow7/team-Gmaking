@@ -15,12 +15,12 @@
     </resultMap>
 
     <select id="getCharacterStat" parameterType="int" resultMap="characterStatMap">
-        SELECT * FROM TB_CHARACTER_STAT
+        SELECT * FROM tb_character_stat
         WHERE CHARACTER_ID = #{characterId}
     </select>
 
     <insert id="insertCharacterStat" parameterType="com.project.gmaking.character.vo.CharacterStatVO">
-        INSERT INTO TB_CHARACTER_STAT (
+        INSERT INTO tb_character_stat (
         CHARACTER_ID,
         CHARACTER_HP,
         CHARACTER_ATTACK,

@@ -26,10 +26,10 @@
         ELSE '알 수 없음'
         END AS opponentName
 
-        FROM TB_BATTLE_LOG b
-        LEFT JOIN TB_CHARACTER c  ON b.CHARACTER_ID = c.CHARACTER_ID
-        LEFT JOIN TB_CHARACTER oc ON b.OPPONENT_ID = oc.CHARACTER_ID
-        LEFT JOIN TB_MONSTER m    ON b.OPPONENT_ID = m.MONSTER_ID
+        FROM tb_battle_log b
+        LEFT JOIN tb_character c  ON b.CHARACTER_ID = c.CHARACTER_ID
+        LEFT JOIN tb_character oc ON b.OPPONENT_ID = oc.CHARACTER_ID
+        LEFT JOIN tb_monster m    ON b.OPPONENT_ID = m.MONSTER_ID
 
         WHERE b.CHARACTER_ID = #{characterId}
         OR b.OPPONENT_ID = #{characterId}

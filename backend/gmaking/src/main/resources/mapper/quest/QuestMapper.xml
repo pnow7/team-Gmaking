@@ -6,65 +6,96 @@
 <mapper namespace="com.project.gmaking.quest.dao.QuestDAO">
 
     <select id="findAllDailyQuests" resultType="com.project.gmaking.quest.vo.QuestVO">
-        SELECT * FROM TB_QUEST WHERE QUEST_CYCLE = 'DAILY'
+        SELECT *
+        FROM tb_quest
+        WHERE QUEST_CYCLE = 'DAILY'
     </select>
 
     <select id="findByUserAndQuest" resultType="com.project.gmaking.quest.vo.UserQuestVO">
-        SELECT * FROM TB_USER_QUEST WHERE USER_ID = #{userId} AND QUEST_ID = #{questId}
+        SELECT *
+        FROM tb_user_quest
+        WHERE USER_ID = #{userId}
+          AND QUEST_ID = #{questId}
     </select>
 
-    <insert id="insertUserQuest" parameterType="com.project.gmaking.quest.vo.UserQuestVO" useGeneratedKeys="true" keyProperty="userQuestId">
-        INSERT INTO TB_USER_QUEST (USER_ID, QUEST_ID, CURRENT_COUNT, STATUS, STARTED_AT)
+    <insert id="insertUserQuest" parameterType="com.project.gmaking.quest.vo.UserQuestVO" useGeneratedKeys="true"
+            keyProperty="userQuestId">
+        INSERT INTO tb_user_quest (USER_ID, QUEST_ID, CURRENT_COUNT, STATUS, STARTED_AT)
         VALUES (#{userId}, #{questId}, #{currentCount}, #{status}, NOW())
     </insert>
 
     <select id="findByType" resultType="com.project.gmaking.quest.vo.QuestVO">
-        SELECT * FROM TB_QUEST WHERE QUEST_TYPE = #{questType}
+        SELECT *
+        FROM tb_quest
+        WHERE QUEST_TYPE = #{questType}
     </select>
 
     <select id="findById" resultType="com.project.gmaking.quest.vo.QuestVO">
-        SELECT * FROM TB_QUEST WHERE QUEST_ID = #{questId}
+        SELECT *
+        FROM tb_quest
+        WHERE QUEST_ID = #{questId}
     </select>
 
     <update id="incrementProgressByType">
-        UPDATE TB_USER_QUEST uq
-        INNER JOIN TB_QUEST q ON uq.QUEST_ID = q.QUEST_ID
-        SET
-        uq.STATUS = CASE
-        WHEN uq.CURRENT_COUNT + 1 >= q.TARGET_COUNT THEN 'COMPLETED'
-        ELSE 'IN_PROGRESS'
-        END,
+        UPDATE tb_user_quest uq
+            INNER JOIN tb_quest q
+        ON uq.QUEST_ID = q.QUEST_ID
+            SET
+                uq.STATUS = CASE
+                WHEN uq.CURRENT_COUNT + 1 >= q.TARGET_COUNT THEN 'COMPLETED'
+                ELSE 'IN_PROGRESS'
+        END
+        ,
         uq.CURRENT_COUNT = uq.CURRENT_COUNT + 1,
         uq.COMPLETED_AT = CASE
         WHEN uq.CURRENT_COUNT + 1 >= q.TARGET_COUNT THEN CURRENT_TIMESTAMP
         ELSE uq.COMPLETED_AT
         END
-        WHERE uq.USER_ID = #{userId}
-        AND UPPER(q.QUEST_TYPE) = UPPER(#{questType})
-        AND uq.STATUS = 'IN_PROGRESS'
+        WHERE uq.USER_ID =
+        #{userId}
+        AND
+        UPPER
+        (
+        q
+        .
+        QUEST_TYPE
+        )
+        =
+        UPPER
+        (
+        #{questType}
+        )
+        AND
+        uq
+        .
+        STATUS
+        =
+        'IN_PROGRESS'
     </update>
 
 
     <update id="updateStatus">
-        UPDATE TB_USER_QUEST
-        SET STATUS = #{status}, COMPLETED_AT = NOW()
-        WHERE USER_ID = #{userId} AND QUEST_ID = #{questId}
+        UPDATE tb_user_quest
+        SET STATUS       = #{status},
+            COMPLETED_AT = NOW()
+        WHERE USER_ID = #{userId}
+          AND QUEST_ID = #{questId}
     </update>
 
     <update id="resetDailyQuests">
-        UPDATE TB_USER_QUEST
-        SET CURRENT_COUNT = 0,
-        STATUS = 'IN_PROGRESS',
-        STARTED_AT = NOW(),
-        COMPLETED_AT = NULL,
-        LAST_RESET_DATE = #{today}
+        UPDATE tb_user_quest
+        SET CURRENT_COUNT   = 0,
+            STATUS          = 'IN_PROGRESS',
+            STARTED_AT      = NOW(),
+            COMPLETED_AT    = NULL,
+            LAST_RESET_DATE = #{today}
         WHERE (LAST_RESET_DATE IS NULL OR LAST_RESET_DATE &lt; #{today})
     </update>
 
     <select id="findUserDailyQuests" resultType="com.project.gmaking.quest.vo.UserQuestVO">
         SELECT uq.*, q.QUEST_NAME, q.TARGET_COUNT, q.QUEST_TYPE
-        FROM TB_USER_QUEST uq
-        JOIN TB_QUEST q ON uq.QUEST_ID = q.QUEST_ID
+        FROM tb_user_quest uq
+                 JOIN tb_quest q ON uq.QUEST_ID = q.QUEST_ID
         WHERE uq.USER_ID = #{userId}
         ORDER BY q.QUEST_TYPE
     </select>

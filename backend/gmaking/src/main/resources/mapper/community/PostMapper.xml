@@ -2,20 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.gmaking.community.dao.PostDAO">
     <resultMap id="postResultMap" type="com.project.gmaking.community.vo.PostVO">
-        <id property="postId" column="POST_ID" />
-        <result property="title" column="TITLE" />
-        <result property="content" column="CONTENT" />
-        <result property="userId" column="USER_ID" />
-        <result property="userNickname" column="USER_NICKNAME" /> <result property="categoryCode" column="CATEGORY_CODE" />
-        <result property="viewCount" column="VIEW_COUNT" />
-        <result property="likeCount" column="LIKE_COUNT" />
-        <result property="replyCount" column="REPLY_COUNT" />
-        <result property="isDeleted" column="IS_DELETED" />
+        <id property="postId" column="POST_ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="content" column="CONTENT"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="userNickname" column="USER_NICKNAME"/>
+        <result property="categoryCode" column="CATEGORY_CODE"/>
+        <result property="viewCount" column="VIEW_COUNT"/>
+        <result property="likeCount" column="LIKE_COUNT"/>
+        <result property="replyCount" column="REPLY_COUNT"/>
+        <result property="isDeleted" column="IS_DELETED"/>
 
-        <result property="createdDate" column="CREATED_DATE" />
-        <result property="createdBy" column="CREATED_BY" />
-        <result property="updatedDate" column="UPDATED_DATE" />
-        <result property="updatedBy" column="UPDATED_BY" />
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="updatedDate" column="UPDATED_DATE"/>
+        <result property="updatedBy" column="UPDATED_BY"/>
     </resultMap>
 
     <sql id="criteria">
@@ -38,59 +39,55 @@
     </sql>
 
     <insert id="insertPost" useGeneratedKeys="true" keyProperty="postId" keyColumn="POST_ID">
-        INSERT INTO TB_COMMUNITY_POST(TITLE, CONTENT, USER_ID, CATEGORY_CODE, CREATED_DATE)
-        VALUES (
-        #{title},
-        #{content},
-        #{userId},
-        #{categoryCode},
-        NOW() )
+        INSERT INTO tb_community_post(TITLE, CONTENT, USER_ID, CATEGORY_CODE, CREATED_DATE)
+        VALUES (#{title},
+                #{content},
+                #{userId},
+                #{categoryCode},
+                NOW())
     </insert>
 
     <update id="updatePost">
-        UPDATE TB_COMMUNITY_POST SET
-        TITLE = #{title},
-        CONTENT = #{content},
-        UPDATED_DATE = NOW()
+        UPDATE tb_community_post
+        SET TITLE        = #{title},
+            CONTENT      = #{content},
+            UPDATED_DATE = NOW()
         WHERE POST_ID = #{postId}
     </update>
 
     <select id="selectPostById" resultMap="postResultMap">
-        SELECT
-        p.POST_ID,
-        p.TITLE,
-        p.CONTENT,
-        p.USER_ID,
-        p.CREATED_DATE,
-        p.UPDATED_DATE,
-        p.CATEGORY_CODE,
-        p.VIEW_COUNT,
-        p.IS_DELETED,
+        SELECT p.POST_ID,
+               p.TITLE,
+               p.CONTENT,
+               p.USER_ID,
+               p.CREATED_DATE,
+               p.UPDATED_DATE,
+               p.CATEGORY_CODE,
+               p.VIEW_COUNT,
+               p.IS_DELETED,
 
-        u.USER_NICKNAME,
+               u.USER_NICKNAME,
 
-        (
-        SELECT COUNT(l.POST_ID)
-        FROM TB_COMMUNITY_LIKE l
-        WHERE l.POST_ID = p.POST_ID
-        ) AS LIKE_COUNT,
+               (SELECT COUNT(l.POST_ID)
+                FROM tb_community_like l
+                WHERE l.POST_ID = p.POST_ID) AS LIKE_COUNT,
 
-        (
-        SELECT COUNT(r.COMMENT_ID)
-        FROM TB_COMMUNITY_COMMENT r
-        WHERE r.POST_ID = p.POST_ID AND r.IS_DELETED = 0
-        ) AS REPLY_COUNT,
+               (SELECT COUNT(r.COMMENT_ID)
+                FROM tb_community_comment r
+                WHERE r.POST_ID = p.POST_ID
+                  AND r.IS_DELETED = 0)      AS REPLY_COUNT,
 
-        p.CREATED_BY,
-        p.UPDATED_BY
+               p.CREATED_BY,
+               p.UPDATED_BY
 
-        FROM TB_COMMUNITY_POST p
-        LEFT JOIN TB_USER u ON p.USER_ID = u.USER_ID
+        FROM tb_community_post p
+                 LEFT JOIN tb_user u ON p.USER_ID = u.USER_ID
         WHERE p.POST_ID = #{postId}
     </select>
 
     <delete id="deletePost">
-        DELETE FROM TB_COMMUNITY_POST
+        DELETE
+        FROM tb_community_post
         WHERE POST_ID = #{postId}
     </delete>
 
@@ -110,21 +107,21 @@
 
         (
         SELECT COUNT(l.POST_ID)
-        FROM TB_COMMUNITY_LIKE l
+        FROM tb_community_like l
         WHERE l.POST_ID = p.POST_ID
         ) AS LIKE_COUNT,
 
         (
         SELECT COUNT(c.COMMENT_ID)
-        FROM TB_COMMUNITY_COMMENT c
+        FROM tb_community_comment c
         WHERE c.POST_ID = p.POST_ID AND c.IS_DELETED = 0
         ) AS REPLY_COUNT,
 
         p.CREATED_BY,
         p.UPDATED_BY
 
-        FROM TB_COMMUNITY_POST p
-        LEFT JOIN TB_USER u ON p.USER_ID = u.USER_ID
+        FROM tb_community_post p
+        LEFT JOIN tb_user u ON p.USER_ID = u.USER_ID
 
         <where>
             p.IS_DELETED = 'N'
@@ -153,7 +150,8 @@
                 )
             </if>
             <if test="userId != null and userId != ''">
-                AND p.USER_ID = #{userId} </if>
+                AND p.USER_ID = #{userId}
+            </if>
             <if test="categoryCode != null and categoryCode != '' and categoryCode != 'ALL'.toString()">
                 AND p.CATEGORY_CODE = #{categoryCode}
             </if>
@@ -165,50 +163,48 @@
     <select id="selectPostCount" resultType="int">
         SELECT
         COUNT(p.POST_ID)
-        FROM TB_COMMUNITY_POST p
-        LEFT JOIN TB_USER u ON p.USER_ID = u.USER_ID <where>
-        p.IS_DELETED = 'N'
-        <if test="keyword != null and keyword != ''">
-            AND (
-            <choose>
-                <when test="searchType == 'T'.toString()">
-                    p.TITLE LIKE CONCAT('%', #{keyword}, '%')
-                </when>
-                <when test="searchType == 'C'.toString()">
-                    p.CONTENT LIKE CONCAT('%', #{keyword}, '%')
-                </when>
-                <when test="searchType == 'W'.toString()">
-                    u.USER_NICKNAME LIKE CONCAT('%', #{keyword}, '%')
-                </when>
-                <when test="searchType == 'TC'.toString() or searchType == null or searchType == ''">
-                    p.TITLE LIKE CONCAT('%', #{keyword}, '%')
-                    OR p.CONTENT LIKE CONCAT('%', #{keyword}, '%')
-                </when>
-                <otherwise>
-                    p.TITLE LIKE CONCAT('%', #{keyword}, '%')
-                    OR p.CONTENT LIKE CONCAT('%', #{keyword}, '%')
-                    OR u.USER_NICKNAME LIKE CONCAT('%', #{keyword}, '%')
-                </otherwise>
-            </choose>
-            )
-        </if>
-        <if test="userId != null and userId != ''">
-            AND p.USER_ID = #{userId}
-        </if>
-        <if test="categoryCode != null and categoryCode != '' and categoryCode != 'ALL'.toString()">
-            AND p.CATEGORY_CODE = #{categoryCode}
-        </if>
-    </where>
+        FROM tb_community_post p
+        LEFT JOIN tb_user u ON p.USER_ID = u.USER_ID
+        <where>
+            p.IS_DELETED = 'N'
+            <if test="keyword != null and keyword != ''">
+                AND (
+                <choose>
+                    <when test="searchType == 'T'.toString()">
+                        p.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'C'.toString()">
+                        p.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'W'.toString()">
+                        u.USER_NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'TC'.toString() or searchType == null or searchType == ''">
+                        p.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                        OR p.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        p.TITLE LIKE CONCAT('%', #{keyword}, '%')
+                        OR p.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+                        OR u.USER_NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+                    </otherwise>
+                </choose>
+                )
+            </if>
+            <if test="userId != null and userId != ''">
+                AND p.USER_ID = #{userId}
+            </if>
+            <if test="categoryCode != null and categoryCode != '' and categoryCode != 'ALL'.toString()">
+                AND p.CATEGORY_CODE = #{categoryCode}
+            </if>
+        </where>
     </select>
 
     <update id="updatePostLikeCount">
-        UPDATE TB_COMMUNITY_POST
-        SET
-            LIKE_COUNT = (
-                SELECT COUNT(POST_ID)
-                FROM TB_COMMUNITY_LIKE
-                WHERE POST_ID = #{postId}
-            ),
+        UPDATE tb_community_post
+        SET LIKE_COUNT   = (SELECT COUNT(POST_ID)
+                            FROM tb_community_like
+                            WHERE POST_ID = #{postId}),
             UPDATED_DATE = NOW()
         WHERE POST_ID = #{postId}
     </update>
@@ -220,31 +216,26 @@
     </update>
 
     <select id="selectCategoryCounts" resultType="map">
-        SELECT
-        p.CATEGORY_CODE AS categoryCode,
-        COUNT(p.POST_ID) AS postCount
-        FROM TB_COMMUNITY_POST p
+        SELECT p.CATEGORY_CODE  AS categoryCode,
+               COUNT(p.POST_ID) AS postCount
+        FROM tb_community_post p
         WHERE p.IS_DELETED = 'N'
         GROUP BY p.CATEGORY_CODE
         ORDER BY postCount DESC
     </select>
 
     <select id="selectHotPosts" resultMap="postResultMap">
-        SELECT
-        p.POST_ID,
-        p.TITLE,
-        p.USER_ID,
+        SELECT p.POST_ID,
+               p.TITLE,
+               p.USER_ID,
 
-        (
-        SELECT COUNT(l.POST_ID)
-        FROM TB_COMMUNITY_LIKE l
-        WHERE l.POST_ID = p.POST_ID
-        ) AS LIKE_COUNT
+               (SELECT COUNT(l.POST_ID)
+                FROM tb_community_like l
+                WHERE l.POST_ID = p.POST_ID) AS LIKE_COUNT
 
-        FROM TB_COMMUNITY_POST p
+        FROM tb_community_post p
         WHERE p.IS_DELETED = 'N'
 
-        ORDER BY LIKE_COUNT DESC, p.POST_ID DESC
-        LIMIT 3
+        ORDER BY LIKE_COUNT DESC, p.POST_ID DESC LIMIT 3
     </select>
 </mapper>

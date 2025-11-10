@@ -6,7 +6,7 @@
 <mapper namespace="com.project.gmaking.aiLog.dao.AiUsageLogDAO">
 
     <insert id="upsertGeminiUsage">
-        INSERT INTO TB_AI_USAGE_LOG (
+        INSERT INTO tb_ai_usage_log (
             user_id, feature_type, model_name,
             input_token, output_token, total_cost,
             request_count, usage_status, error_message,

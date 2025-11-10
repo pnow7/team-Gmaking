@@ -15,7 +15,7 @@
             CREATED_BY         AS createdBy,
             UPDATED_DATE       AS updatedDate,
             UPDATED_BY         AS updatedBy
-        FROM TB_PERSONA
+        FROM tb_persona
         WHERE CHARACTER_ID = #{characterId}
         ORDER BY UPDATED_DATE DESC, PERSONA_ID DESC
         LIMIT 1
@@ -23,7 +23,7 @@
 
     <!-- 새 페르소나 생성 -->
     <insert id="insertPersona">
-        INSERT INTO TB_PERSONA (
+        INSERT INTO tb_persona (
             CHARACTER_ID,
             INSTRUCTION_PROMPT,
             CREATED_DATE,
