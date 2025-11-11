@@ -80,3 +80,8 @@ HELP.md
 # 모델 학습에 필요한 이미지 파일들
 **/dataset/
 **/datasetOriginal/
+
+Dockerfile
+.dockerignore
+docker-compose.yml
+entrypoint.sh

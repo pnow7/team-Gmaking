@@ -38,7 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || uri.equals("/favicon.ico");
     }
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -46,10 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
         // Request Header에서 토큰 추출
         String jwt = resolveToken(request);
-
-
 
         if (jwt == null) {
             System.out.println("[SEC] " + request.getMethod() + " " + request.getRequestURI() + " Authorization=null");
@@ -77,8 +75,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else {
             System.out.println("[SEC] token invalid or missing");
         }
-
-
 
         filterChain.doFilter(request, response);
     }
