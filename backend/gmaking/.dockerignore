@@ -6,5 +6,3 @@ build
 .vscode
 *.md
 *.log
-*.env
-src/main/resources/gcp-service-key.json

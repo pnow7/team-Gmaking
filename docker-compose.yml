@@ -19,13 +19,11 @@ services:
     build: ./backend/gmaking
     container_name: gmaking-backend
     restart: always
-    environment:
-      model.server.url: ${MODEL_SERVER_URL}
-      growth.server.url: ${GROWTH_AI_SERVER_URL}
     env_file:
       - ./backend/gmaking/.env
       - ./.env
     volumes:
+      - ./backend/gmaking/.env:/app/.env
       - ./backend/gmaking/src/main/resources/gcp-service-key.json:/app/src/main/resources/gcp-service-key.json
     ports:
       - "8080:8080"

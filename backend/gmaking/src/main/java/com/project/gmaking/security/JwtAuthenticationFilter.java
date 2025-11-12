@@ -76,6 +76,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("[SEC] token invalid or missing");
         }
 
+        System.out.println("[JWT Filter] doFilterInternal 실행됨");
+        System.out.println("[JWT Filter] Header: " + request.getHeader("Authorization"));
         filterChain.doFilter(request, response);
     }
 

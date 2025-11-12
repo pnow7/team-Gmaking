@@ -1,8 +1,18 @@
 #!/bin/bash
-# 환경 변수 파일이 있으면 로드
+echo "Loading environment variables safely from .env..."
+
 if [ -f ".env" ]; then
-  export $(grep -v '^#' .env | xargs)
+  # 주석, 빈줄, 한글 공백 제거
+  while IFS= read -r line || [ -n "$line" ]; do
+    # 공백 제거
+    line=$(echo "$line" | tr -d '\r' | xargs)
+    # 빈줄, 주석(#)으로 시작하는 줄은 무시
+    if [ -z "$line" ] || [[ "$line" == \#* ]]; then
+      continue
+    fi
+    export "$line"
+  done < .env
 fi
 
-# 실행
+echo ".env variables loaded successfully"
 exec java -jar app.jar

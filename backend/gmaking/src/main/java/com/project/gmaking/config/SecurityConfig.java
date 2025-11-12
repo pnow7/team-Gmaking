@@ -89,10 +89,14 @@ public class SecurityConfig {
 
                         // 웹알림
                         .requestMatchers("/notify-ws/**").permitAll()
+
                         // 마이 페이지 수정
                         .requestMatchers("/mypage/profile/**").authenticated()
                         .requestMatchers("/mypage/account").authenticated()
                         .requestMatchers("/api/shop/**").authenticated()
+                        
+                        // 캐릭터 생성
+                        .requestMatchers("/api/character/**").permitAll()
 
                         // /api/** 전체 허용 (이 한 줄로 다 처리됨)
                         .requestMatchers("/api/**").permitAll()
