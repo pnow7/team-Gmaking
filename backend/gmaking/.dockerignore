@@ -1,0 +1,10 @@
+.gradle
+build
+.git
+.gitignore
+.gitattributes
+.vscode
+*.md
+*.log
+*.env
+src/main/resources/gcp-service-key.json

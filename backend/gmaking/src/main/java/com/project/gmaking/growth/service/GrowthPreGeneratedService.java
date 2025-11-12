@@ -31,7 +31,8 @@ public class GrowthPreGeneratedService {
     private final GcsService gcsService;
     private final RestTemplate restTemplate;
 
-    @Value("${ai.server.url:http://localhost:8001/api/v1/grow-character}")
+    // @Value("${ai.server.url:http://localhost:8001/api/v1/grow-character}")
+    @Value("${growth.ai.server.url:http://localhost:8001/api/v1/grow-character}")
     private String aiServerUrl;
 
     /** 조건에 맞는 캐릭터 목록 조회 */
