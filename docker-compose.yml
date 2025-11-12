@@ -4,7 +4,7 @@ services:
     container_name: gmaking-mysql
     restart: always
     env_file:
-      - ./.env  # 루트 .env에서 DB 관련만 관리
+      - ./.env
     ports:
       - "3307:3306"
     volumes:
@@ -16,7 +16,6 @@ services:
     build: ./backend/gmaking
     container_name: gmaking-backend
     restart: always
-    # env_file은 backend용 .env만
     env_file:
       - ./backend/gmaking/.env
     volumes:
