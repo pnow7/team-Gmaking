@@ -4,15 +4,55 @@
 
 ## 1. 문제 요약 (Symptom)
 
+### 🚨 WebClient multipart 전송 시 Host 헤더가 사라지는 버그
+실제로 존재하는 버그이며:
+- WebClient + multipart/form-data + Docker 내부 host 이름 사용 시
+- Host 헤더가 삭제되거나 null로 들어가서
+- Netty 내부에서 **Host is not specified** 발생함
+
+특히 사용하는 코드 패턴이 아래와 같다면 거의 확정:
+```java
+webClient.post()
+  .uri("http://ai-server:8000/classify/image")
+  .contentType(MediaType.MULTIPART_FORM_DATA)
+  .body(BodyInserters.fromMultipartData(data))
+  .retrieve()
+```
+이 조합에서 발생하는 유명한 버그
+
+
 Spring Boot에서 Docker 내부 FastAPI 서버로 `multipart/form-data` 요청을 보낼 때 다음 오류가 발생:
 
-java.lang.IllegalArgumentException: host is not specified
+>java.lang.IllegalArgumentException: host is not specified
 
 Spring 로그 예시: ❌ 모델 서버 통신 오류: Host is not specified (엔드포인트: /classify/image)
 
 
 클라이언트 응답: 이미지 분류 서버에 연결할 수 없습니다. 다시 시도해 주세요.
 
+---
+
+###  🚨 같은 타입(WebClient) 빈이 2개인데 Bean 이름 충돌/프록시 충돌로 인해
+#### Spring이 WebClientConfig 자체를 스킵해버림
+
+WebClientConfig.java 파일 외에 IamportWebClientConfig.java 존재.
+
+즉 최종 구조:
+- IamportWebClientConfig → WebClient 빈 1개
+- WebClientConfig → WebClient 빈 1개(classificationWebClient)
+- Spring WebFlux AutoConfig → WebClient 빈 1개 (기본 WebClient)
+
+총 **3개가 등록되는 상황**이 됨.
+
+실제로 이런 경우 Spring은:
+
+✔️ 충돌나는 WebClientConfig을 스캔은 하지만
+
+❌ 빈 등록은 무시할 수 있다 (auto config overriding off 상태일 때)
+
+#### 실무에서도 100% 실제로 발생하는 문제!
+
+> 
 
 ---
 
@@ -143,7 +183,7 @@ Reactor Netty 와 WebClient multipart/form-data 조합에서 Host 헤더가 유�
 
 ---
 
-# 추가적인 문제 해결
+# 추가
 
 ## 📌 1. 변경 이력(Changelog)
 
@@ -164,18 +204,7 @@ Reactor Netty 와 WebClient multipart/form-data 조합에서 Host 헤더가 유�
 version: "3.9"
 
 services:
-  db:
-    image: mysql:8.4
-    container_name: gmaking-mysql
-    restart: always
-    env_file:
-      - ./.env
-    ports:
-      - "3307:3306"
-    volumes:
-      - ./db_init:/docker-entrypoint-initdb.d
-    networks:
-      - gmaking-network
+  ... (생략)
 
   backend:
     build: ./backend/gmaking
@@ -201,41 +230,7 @@ services:
     networks:
       - gmaking-network
 
-  frontend:
-    build: ./frontend
-    container_name: gmaking-frontend
-    restart: always
-    env_file:
-      - ./frontend/.env
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - gmaking-network
-
-  ai-server:
-    build: ./ai_server
-    container_name: ai-server
-    restart: always
-    ports:
-      - "8000:8000"
-    networks:
-      - gmaking-network
-
-  growth-ai-server:
-    build: ./growth_ai_server
-    container_name: growth_ai_server
-    restart: always
-    env_file:
-      - ./backend/gmaking/.env
-    working_dir: /app
-    ports:
-      - "8001:8001"
-    depends_on:
-      - db
-    networks:
-      - gmaking-network
+  ... (생략)
 
 networks:
   gmaking-network:
