@@ -16,7 +16,7 @@ AI가 생성한 캐릭터와 함께 **PVE / PVP 대전**, **퀘스트 수행**,
 **미니게임**, **AI 대화 시스템**, **상점**, **커뮤니티** 기능이 제공됩니다.
 
 ## 🐋 Docker 기반 풀 인프라 구축 (by 박현재)
-본 프로젝트는 백엔드 **백엔드(Spring Boot), 프론트엔드(React), AI 이미지 분류 서버(FastAPI + YOLOv8), AI 성장 서버(FastAPI), MySQL DB** 등 총 **5개 서비스를 Docker Compose로 통합 배포**하도록 설계되었습니다.
+본 프로젝트는 **백엔드(Spring Boot), 프론트엔드(React), AI 이미지 분류 서버(FastAPI + YOLOv8), AI 성장 서버(FastAPI), MySQL DB** 등 총 **5개 서비스를 Docker Compose로 통합 배포**하도록 설계되었습니다.
 
 - 백엔드/프론트/AI 서버 **개별 Dockerfile 작성**
 - Docker 네트워크 기반 서비스 간 통신 구조 설계
