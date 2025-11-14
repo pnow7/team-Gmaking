@@ -301,9 +301,4 @@ curl http://ai-server:8000/classify/image
 
 ---
 
-[⬅ 뒤로 가기](../phj/README.md)
-
 [⬅ 메인 README로 돌아가기](../../README.md)
-
----
-

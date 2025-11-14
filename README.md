@@ -2,7 +2,7 @@
 
 > **“당신의 캐릭터가 스스로 성장하는 세계”**  
 > AI를 활용한 캐릭터 생성, 성장, 전투, 채팅, 커뮤니티가 결합된 웹 플랫폼  
-> **Spring Boot + React + FastAPI + YOLOv8 + GPT + DALL·E 3 + Gemini + Stable Diffusion**
+> **Spring Boot + React + FastAPI + YOLOv8 + GPT + DALL·E 3 + Gemini + Stable Diffusion + Docker**
 
 ---
 
@@ -14,6 +14,22 @@
 단순한 캐릭터 꾸미기를 넘어,  
 AI가 생성한 캐릭터와 함께 **PVE / PVP 대전**, **퀘스트 수행**,  
 **미니게임**, **AI 대화 시스템**, **상점**, **커뮤니티** 기능이 제공됩니다.
+
+## 🐋 Docker 기반 풀 인프라 구축 (by 박현재)
+본 프로젝트는 백엔드 **백엔드(Spring Boot), 프론트엔드(React), AI 이미지 분류 서버(FastAPI + YOLOv8), AI 성장 서버(FastAPI), MySQL DB** 등 총 **5개 서비스를 Docker Compose로 통합 배포**하도록 설계되었습니다.
+
+- 백엔드/프론트/AI 서버 **개별 Dockerfile 작성**
+- Docker 네트워크 기반 서비스 간 통신 구조 설계
+- `.env` → 컨테이너 환경 변수 자동 주입 설계
+- GCP Storage Key 자동 마운트 구성
+- WebClient multipart 오류 해결을 통한 안정적 AI 통신 구축
+- FastAPI 모델 서버 CPU 최적화, 이미지 경로 매핑 구조 개선
+- docker-compose.yml 전체 작성 및 운영 스크립트 구성
+
+> ⚡ 팀에서 전체 컨테이너 인프라 설계 및 구성 담당(DevOps 역할) 수행
+> → “개발 + 인프라 + AI 서버 운영”까지 모두 아우르는 핵심 기여
+
+[⬅ Docker 가이드 README 보러가기](./README/docker/README.md)
 
 ---
 
@@ -40,6 +56,7 @@ AI가 생성한 캐릭터와 함께 **PVE / PVP 대전**, **퀘스트 수행**,
 | **Frontend** | React, TailwindCSS, Axios, React Router |
 | **Backend** | Spring Boot, MySQL, JWT |
 | **AI Server** | FastAPI, YOLOv8, DALL·E 3, Stable Diffusion, GPT API, Gemini |
+| **DevOps** | Docker, Docker Compose, GCP Storage |
 | **collaboration tools** | Notion, Google Cloud, Discord, Kakao, , MiriCanvas, GitHub |
 
 ---

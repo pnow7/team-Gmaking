@@ -2,6 +2,28 @@
 
 본 문서는 **Spring Boot**, **React**, **FastAPI 모델 서버**, **MySQL**로 구성된 Gmaking 프로젝트 전체를 **Docker 기반**으로 실행하고 배포하기 위한 가이드입니다.
 
+--- 
+## Docker 인프라 구성 (by 박현재)
+### 🧱 구성요소
+- backend (Spring Boot)
+
+- frontend (React)
+
+- ai-server (FastAPI + YOLOv8)
+
+- growth-ai-server (FastAPI)
+
+- mysql 8.4
+
+- docker network: `gmaking-network`
+
+### 🔥 통신 구조
+```
+frontend → backend → ai-server
+                     ↳ growth-ai-server
+backend ↔ mysql
+```
+
 ---
 
 ## 📁 1. 프로젝트 구조
@@ -76,4 +98,8 @@ docker-compose up -d
 ```
 ---
 
-[⬅ 뒤로 가기](../phj/README.md)
+[⬅ 메인 README로 돌아가기](../../README.md)
+
+---
+
+[⬅ Docker Trouble Shooting README 보러가기](../troubleshooting/README.md)
