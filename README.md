@@ -58,7 +58,7 @@ AI가 생성한 캐릭터와 함께 **PVE / PVP 대전**, **퀘스트 수행**,
 
 | [![박수민](https://github.com/psm0419.png?size=100)](https://github.com/psm0419) | [![박은희](https://github.com/dmsgml7476.png?size=100)](https://github.com/dmsgml7476) | [![박현재](https://github.com/pnow7.png?size=100)](https://github.com/pnow7) | [![엄정민](https://github.com/zcx1119son.png?size=100)](https://github.com/zcx1119son) |
 |:--:|:--:|:--:|:--:|
-| **[박수민](https://github.com/psm0419)**<br>팀장 / 이미지 분류, 토론 AI | **[박은희](https://github.com/dmsgml7476)**<br>팀원 / 채팅 AI, 도우미봇(RAG) | **[박현재](https://github.com/pnow7)**<br>팀원 / 이미지 생성 AI | **[엄정민](https://github.com/zcx1119son)**<br>팀원 / 이미지 변형 AI |
+| **[박수민](https://github.com/psm0419)**<br>팀장 / 이미지 분류, 토론 AI | **[박은희](https://github.com/dmsgml7476)**<br>팀원 / 채팅 AI, 도우미봇(RAG) | **[박현재](https://github.com/pnow7)**<br>팀원 / 이미지 생성 AI / (도커) | **[엄정민](https://github.com/zcx1119son)**<br>팀원 / 이미지 변형 AI |
 | [개인 문서 →](./README/psm/README.md) | [개인 문서 →](./README/peh/README.md) | [개인 문서 →](./README/phj/README.md) | [개인 문서 →](./README/ejm/README.md) |
 
 ---

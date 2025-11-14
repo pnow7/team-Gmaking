@@ -73,31 +73,31 @@ async def classify_image(image: UploadFile = File(...)):
         
     print(f"🔍 [INFO] 이미지 분류 요청 수신: 파일명='{image.filename}', 크기={image.size}bytes")
 
-    # 1. 이미지 파일 읽기
+    # 이미지 파일 읽기
     content = await image.read()
     
     try:
         # BytesIO를 사용하여 메모리에서 PIL Image로 로드
-        image = Image.open(BytesIO(content)).convert("RGB")
+        pil_img = Image.open(BytesIO(content)).convert("RGB")
     except Exception as e:
         # 이미지 파일 형식이 잘못되었을 때 처리
         raise HTTPException(status_code=400, detail=f"잘못된 이미지 파일 형식입니다: {e}")
     
-    # 2. 전처리
-    input_tensor = preprocess_image(image)
+    # 전처리
+    input_tensor = preprocess_image(pil_img)
     
-    # 3. 추론 
+    # 추론 
     # torch.no_grad()를 사용하여 메모리 사용량 절약 및 속도 향상
     with torch.no_grad():
         results = model(input_tensor, imgsz=IMG_SIZE, verbose=False, device='cpu') 
         
-    # 4. 결과 해석(결과: Ultralytics Results 객체)
+    # 결과 해석(결과: Ultralytics Results 객체)
     # results[0]은 배치 결과 중 첫 번째 이미지의 결과
     probs = results[0].probs      # Probabilities 객체 (클래스별 확률)
     top_index = probs.top1        # 가장 높은 확률의 클래스 인덱스 (int)
     confidence = probs.top1conf.item() # 해당 인덱스의 확률 (float)
     
-    # 5. 결과 반환
+    # 결과 반환
     predicted_class_name = CLASS_NAMES.get(top_index, "Unknown")
     
     response_data = {

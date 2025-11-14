@@ -141,4 +141,173 @@ Reactor Netty 와 WebClient multipart/form-data 조합에서 Host 헤더가 유�
 🧩 모델 서버 응답 VO: { predictedAnimal=..., confidence=0.95 }
 ```
 
-- [⬅ 메인 README로 돌아가기](../../README.md)
+---
+
+# 추가적인 문제 해결
+
+## 📌 1. 변경 이력(Changelog)
+
+- ✔ FastAPI 파라미터 mismatch (`file → image`) 수정
+- ✔ WebClientConfig 에 `baseUrl` 추가
+- ✔ `.uri(path-only)` 방식으로 변경
+- ✔ docker-compose.yml 에 `environment:` 추가
+- ✔ Docker 서비스 이름 `ai_server` → `ai-server` 로 변경
+- ✔ 언더바 `_` 대신 하이픈 `-` 사용 이유 정리
+
+## ⚙️ 2. `docker-compose.yml` (최종 버전)
+
+최종 `docker-compose.yml` 파일에는 모든 서비스(백엔드, 프론트엔드, AI 서버, 데이터베이스)의 정의와 네트워크 설정, 그리고 환경 변수 설정이 포함됩니다.
+
+> **💡 중요:** Docker Compose 내에서 컨테이너 간 통신 시에는 `localhost` 대신 **서비스 이름**을 사용해야 합니다. (예: 백엔드에서 AI 서버 호출 시, AI 서버의 서비스 이름 사용)
+
+```
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: gmaking-mysql
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db_init:/docker-entrypoint-initdb.d
+    networks:
+      - gmaking-network
+
+  backend:
+    build: ./backend/gmaking
+    container_name: gmaking-backend
+    restart: always
+
+    # 🔥 중요! Spring WebClient가 인식하도록 ENV 전달
+    environment:
+      MODEL_SERVER_URL: "http://ai-server:8000"
+      MODEL_SERVER_CLASSIFY_PATH: "/classify/image"
+
+    env_file:
+      - ./backend/gmaking/.env
+
+    volumes:
+      - ./backend/gmaking/src/main/resources/gcp-service-key.json:/app/src/main/resources/gcp-service-key.json
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - ai-server
+      - growth-ai-server
+    networks:
+      - gmaking-network
+
+  frontend:
+    build: ./frontend
+    container_name: gmaking-frontend
+    restart: always
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - gmaking-network
+
+  ai-server:
+    build: ./ai_server
+    container_name: ai-server
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - gmaking-network
+
+  growth-ai-server:
+    build: ./growth_ai_server
+    container_name: growth_ai_server
+    restart: always
+    env_file:
+      - ./backend/gmaking/.env
+    working_dir: /app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    networks:
+      - gmaking-network
+
+networks:
+  gmaking-network:
+    driver: bridge
+```
+> **왜 environment를 docker-compose.yml에 추가해야 했는가?***
+
+### ❗문제원인
+Spring Boot는 다음 방식의 .env를 자동으로 읽지 않음
+```bash
+env_file:
+  - ./.env
+```
+`env`는
+- docker-compose 컨테이너 환경변수로는 들어가지만
+- **Spring Boot 환경 변수로는 전달되지 않음**
+
+그래서 다음 값이 null로 들어왔음
+
+- `${MODEL_SERVER_URL}`
+- `${MODEL_SERVER_CLASSIFY_PATH}`
+
+그 결과 WebClientConfig가 baseUrl을 제대로 설정하지 못함 → Host header null → `"Host is not specified"` 발생.
+
+### ✔ 해결
+**docker-compose.yml → backend → environment 에서 강제로 전달**
+
+```yaml
+environment:
+  MODEL_SERVER_URL: "http://ai-server:8000"
+  MODEL_SERVER_CLASSIFY_PATH: "/classify/image"
+```
+
+### 🧷 왜 Docker 서비스 이름은 `ai_server` 보다 `ai-server` 가 좋은가?
+Docker Compose는 내부 DNS를 자동 생성함
+서비스 이름이 곧 DNS hostname이 됨.
+
+#### ✘ 언더바(_) 문제점
+언더바는 URL/HOST 규격(RFC 952/1123)에서 비권장 문자
+```nginx
+ai_server   → DNS에서 종종 비표준으로 처리됨  
+```
+일부 라이브러리는 `_`를 만났을 때:
+- Host 파싱 실패
+- Host header 유실
+- URL 인코딩 문제
+- WebClient가 Host를 인식하지 못하는 버그 발생 가능
+
+특히 WebClient + multipart 조합에서는 이 값이 쉽게 깨짐.
+
+#### ✔ 하이픈(-) 권장
+```
+ai-server  → 100% RFC 규격 준수
+```
+표준 DNS 이름으로 안정적이며
+WebClient, Netty, Reactor에서 모두 정상 처리됨.
+
+#### 그래서 서비스 이름을 이렇게 수정함:
+```
+ai-server:
+```
+backend 컨테이너에서 curl도 문제 없이 됨:
+```
+curl http://ai-server:8000/classify/image
+```
+
+
+---
+
+[⬅ 뒤로 가기](../phj/README.md)
+
+[⬅ 메인 README로 돌아가기](../../README.md)
+
+---
+

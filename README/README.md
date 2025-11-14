@@ -136,5 +136,6 @@ npm start
 > 참고:
 > 환경 설정 관련 세부 내용 및 .env 파일 키값은 보안을 위해 별도 문서에서 관리됩니다.
 
-[⬅ Docker Trouble Shooting README 보러가기](../README/troubleshooting/README.md)
+
+---
 [⬅ 메인 README로 돌아가기](../README.md)

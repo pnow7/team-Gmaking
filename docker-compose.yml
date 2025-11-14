@@ -45,7 +45,7 @@ services:
     networks:
       - gmaking-network
 
-  ai-server:  # ←←← 여기, 서비스 이름을 이렇게!
+  ai-server:
     build: ./ai_server
     container_name: ai-server
     restart: always
